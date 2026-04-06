@@ -1,0 +1,29 @@
+name: Splunk API Sync
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'rules/splunk/**'  # Yalnız bu qovluqda dəyişiklik olanda işləsin
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kodu endir
+        uses: actions/checkout@v2
+
+      - name: Python-u quraşdır
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Lazımi kitabxanaları yüklə
+        run: pip install requests
+
+      - name: Skripti işə sal və Splunka göndər
+        env:
+          SPLUNK_URL: ${{ secrets.SPLUNK_URL }}
+          SPLUNK_TOKEN: ${{ secrets.SPLUNK_TOKEN }}
+        run: python scripts/sync_to_splunk.py
